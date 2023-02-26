@@ -1,0 +1,42 @@
+- name: Install google authenticator package
+  apt:
+    name: "libpam-google-authenticator" 
+    state: present
+    update_cache: yes
+
+- name: Copy local google authenticator conf to the host
+  copy:
+    owner: bender
+    group: bender
+    src: "../ansible/roles/2fa/files/google_authenticator"
+    dest: "/home/bender/.google_authenticator"
+    mode: 0600
+
+- name: Delete ssh password connection in pam configuration file
+  lineinfile:
+    path: "/etc/pam.d/sshd"
+    regexp: "@include common-auth"
+    line: "#@include common-auth"
+
+- name: add google authenticator method to pam configuration file
+  lineinfile:
+    path: "/etc/pam.d/sshd"
+    line: "auth required pam_google_authenticator.so nullok"
+
+- name: Set ChallengeResponseAuthentication to yes
+  lineinfile:
+    path: "/etc/ssh/sshd_config"
+    regexp: "^ChallengeResponseAuthentication (yes|no)"
+    line: "ChallengeResponseAuthentication yes"
+    state: present
+
+- name: Set authentification method on bender to enable 2fa
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    block: |
+      Match User "vagrant,ubuntu"
+        AuthenticationMethods publickey
+      Match User "bender,!vagrant,!ubuntu"
+        AuthenticationMethods publickey,keyboard-interactive
+    state: present
+  notify: "Restart SSH Server"

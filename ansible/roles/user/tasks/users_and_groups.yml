@@ -1,0 +1,31 @@
+- name: Ensure 'developers' group exist
+  group:
+    name: developers
+    state: present
+
+- name: Create 'bender' user
+  user:
+    name: bender
+    shell: /bin/bash
+    password: $6$Km7msJvW/5V054XA$ebUbDKnwcaOwqwdxY42CfboBH4Yv24hdXCiOW8iNRJht6ntb2BCgJ.BzW3Yn7kfqgERP9SCq6mdDkz2F0oZ2t/
+
+- name: Add 'bender' to the 'developers' group
+  user:
+    name: bender
+    groups: developers
+    append: yes
+
+- name: Add /opt/engineering repository for 'developers'
+  file:
+    path: /opt/engineering
+    state: directory
+    mode: 0750
+    group: developers
+
+- name: Create file 'private.txt' in '/opt/engineering'
+  file:
+    path: /opt/engineering/private.txt
+    state: touch
+    mode: 0770
+    group: developers
+    

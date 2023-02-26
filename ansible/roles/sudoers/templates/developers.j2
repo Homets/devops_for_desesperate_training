@@ -1,0 +1,19 @@
+#Command Allias
+
+Cmnd_Alias	START_GREETING	=	/usr/bin/systemctl start greeting , \
+					/usr/bin/systemctl start greeting.service
+
+Cmnd_Alias	STOP_GREETING 	=	/usr/bin/systemctl stop greeting , \
+					/usr/bin/systemctl stop greeting.service
+
+Cmnd_Alias	RESTART_GREETING  =	/usr/bin/systemctl restart greeting , \
+					/usr/bin/systemctl restart greeting.service
+
+
+#Host Alias 
+Host_Alias  LOCAL_VM = {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address']  }}
+
+#User specification
+%developers LOCAL_VM = (root) NOPASSWD:		START_GREETING , STOP_GREETING , \
+						RESTART_GREETING , \
+						sudoedit {{ greeting_application_file }}

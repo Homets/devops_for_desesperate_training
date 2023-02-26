@@ -1,0 +1,28 @@
+---
+- name: ufw log level to low
+  ufw:
+    logging: 'low'
+    
+- name: allow SSH over port 22
+  ufw:
+    rule: allow
+    port: '22'
+    proto: tcp
+
+- name: allow webserver over port 5000 
+  ufw:
+    rule: allow
+    port: '5000'
+    proto: tcp
+
+- name: limit rate port 5000
+  ufw:
+    rule: limit
+    port: '5000'
+    proto: tcp
+    
+- name : deny all other inputs
+  ufw:
+    state: enabled
+    policy: deny
+    direction: incoming

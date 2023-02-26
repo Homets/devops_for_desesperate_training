@@ -1,0 +1,5 @@
+- name: Set authorized keys from Localhost user
+  authorized_key:
+    user: bender
+    state: present
+    key: "{{ lookup('ansible.builtin.file', lookup('ansible.builtin.env', 'HOME')+ '/.ssh/dftd.pub' ) }}" #take content of ssh file with env var

@@ -1,0 +1,32 @@
+---
+- name: install python3-flask gunicorn and nginx
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - python3-flask
+    - nginx
+    - gunicorn
+
+- name: Copy flask app and WSGI file
+  copy:
+    src: "../files/{{ item }}.py" 
+    dest: "/opt/engineering/{{ item }}.py"
+    group: developers
+    mode: 0750
+  loop:
+    - greeting
+    - wsgi
+
+- name: Copy Greeting service Unit file 
+  copy:
+    src: "../files/greeting.service"
+    dest: "/etc/systemd/system/greeting.service"
+
+- name: Enable greeting.service
+  systemd:
+    name: greeting.service
+    daemon-reload: true
+    state: started
+    enabled: true

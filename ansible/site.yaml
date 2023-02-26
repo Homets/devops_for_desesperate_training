@@ -1,0 +1,16 @@
+---
+- name: Provision VM
+  hosts: all
+  become: yes
+  become_method: sudo
+  remote_user: ubuntu
+  tasks:
+    - import_tasks: "roles/user/tasks/pam_pwquality.yml"
+    - import_tasks: "roles/user/tasks/users_and_groups.yml"
+    - import_tasks: "roles/ssh/tasks/authorized_keys.yml"
+    - import_tasks: "roles/2fa/tasks/enable_2fa.yml"
+    - import_tasks: "roles/webapp/tasks/web_application.yml"
+    - import_tasks: "roles/sudoers/tasks/sudoers.yml"
+    - import_tasks: "roles/firewall/tasks/ufw_rules.yml"
+  handlers:
+    - import_tasks: "handlers/restart_ssh.yml"
